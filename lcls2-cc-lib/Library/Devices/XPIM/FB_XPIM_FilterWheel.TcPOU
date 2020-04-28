@@ -43,6 +43,8 @@ VAR
     '}
     fbCom: FB_EL6_COM;
 
+    tonRetry: TON;
+
     nStep: USINT;
     sLastTestCmd: STRING;
     bIsTest: BOOL;
@@ -52,6 +54,7 @@ END_VAR]]></Declaration>
     <Implementation>
       <ST><![CDATA[fbCom.sSendSuffix := '$R';
 fbCom.sRecvSuffix := '$R';
+tonRetry.PT := T#1s;
 
 IF bExecute AND nStep = 0 THEN
     IF bResetError OR NOT bError THEN
@@ -70,12 +73,16 @@ CASE nStep OF
             bSend:=TRUE,
             stIn_EL6:=stIn_EL6,
             stOut_EL6:=stOut_EL6);
+        tonRetry(IN:=FALSE);
+        tonRetry(IN:=TRUE);
         nStep := nStep + 10;
     20:
         // Wait for response and set variables
         fbCom(stIn_EL6:=stIn_EL6,
             stOut_EL6:=stOut_EL6);
+        tonRetry(IN:=TRUE);
         IF fbCom.bDone THEN
+            tonRetry(IN:=FALSE);
             bError := FALSE;
             sError := '';
             nGetPos := STRING_TO_USINT(fbCom.sResponse);
@@ -86,6 +93,11 @@ CASE nStep OF
                 bStopOnErr := TRUE;
                 nStep := 50;
             END_IF
+        ELSIF tonRetry.Q THEN
+            fbCom(bSend:=FALSE,
+                  stIn_EL6:=stIn_EL6,
+                  stOut_EL6:=stOut_EL6);
+            nStep := nStep - 10;
         END_IF
     30:
         // Wait for a move request
