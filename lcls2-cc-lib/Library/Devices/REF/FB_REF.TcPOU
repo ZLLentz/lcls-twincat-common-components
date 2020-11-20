@@ -18,6 +18,7 @@ VAR
     {attribute 'pytmc' := '
         pv: MMS:STATE
         io: io
+        arrStates.array: 1..2
     '}
     fbStates: FB_PositionStateInOut_WithPMPS;
 

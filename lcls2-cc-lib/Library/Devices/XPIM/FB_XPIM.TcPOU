@@ -49,6 +49,7 @@ VAR
     {attribute 'pytmc' := '
         pv: MMS:STATE
         io: io
+        arrStates.array: 1..4
     '}
     fbStates: FB_XPIM_States;
 

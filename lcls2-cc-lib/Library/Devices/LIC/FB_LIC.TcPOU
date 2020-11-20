@@ -21,6 +21,7 @@ VAR
     {attribute 'pytmc' := '
         pv: MMS:STATE
         io: i
+        arrStates.array: 1..4
     '}
     fbStates: FB_LIC_States;
 END_VAR
